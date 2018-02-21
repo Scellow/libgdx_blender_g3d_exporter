@@ -87,6 +87,12 @@ class G3DBaseExporterOperator(ExportHelper, IOG3DOrientationHelper):
         description="Calculate and export tangent and binormal vectors for normal mapping. Requires UV mapping the mesh.",
         default=False
     )
+
+    onlyAnimations = BoolProperty(
+        name="Only Animations",
+        description="Only export animations",
+        default=False
+    )
     
     # This is overriden by the G3DB subclass of this exporter. For the G3DJ this isn't
     # used and is here with it's default value to pass to methods.
@@ -101,6 +107,7 @@ class G3DBaseExporterOperator(ExportHelper, IOG3DOrientationHelper):
         "bonesPerVertex",
         "exportAnimation",
         "generateTangentBinormal",
+        "onlyAnimations",
     ]
 
     vector3AxisMapper = {}
@@ -131,20 +138,21 @@ class G3DBaseExporterOperator(ExportHelper, IOG3DOrientationHelper):
         # Initialize our model
         self.g3dModel = G3DModel()
         
-        # Generate the mesh list of the model
-        meshes = self.generateMeshes(context)
-        if meshes is not None:
-            self.g3dModel.meshes = meshes
-
-        # Generate the materials used in the model
-        materials = self.generateMaterials(context)
-        if materials is not None:
-            self.g3dModel.materials = materials
-
-        # Generate the nodes binding mesh parts, materials and bones
-        nodes = self.generateNodes(context)
-        if nodes is not None:
-            self.g3dModel.nodes = nodes
+        if self.onlyAnimations == False:
+            # Generate the mesh list of the model
+            meshes = self.generateMeshes(context)
+            if meshes is not None:
+                self.g3dModel.meshes = meshes
+    
+            # Generate the materials used in the model
+            materials = self.generateMaterials(context)
+            if materials is not None:
+                self.g3dModel.materials = materials
+    
+            # Generate the nodes binding mesh parts, materials and bones
+            nodes = self.generateNodes(context)
+            if nodes is not None:
+                self.g3dModel.nodes = nodes
 
         # Convert action curves to animations
         animations = self.generateAnimations(context)
@@ -1263,6 +1271,7 @@ class G3DBExporterOperator(bpy.types.Operator, G3DBaseExporterOperator):
         "exportAnimation",
         "generateTangentBinormal",
         "oldFormatJson",
+        "onlyAnimations",
     ]
 
 
